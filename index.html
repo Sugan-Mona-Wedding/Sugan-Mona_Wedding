@@ -13,9 +13,36 @@
 
 .luxury-rings{width:250px;height:155px;margin:2px auto 5px;filter:drop-shadow(0 12px 14px rgba(117,78,24,.20))}
 .luxury-rings svg{width:100%;height:100%;display:block;overflow:visible}
+
+/* Wedding logo opening screen */
+#introScreen{
+  position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+  padding:24px;background:radial-gradient(circle at 50% 35%,#173b5c 0,#0b2137 65%,#061525 100%);
+  color:#f4d28b;text-align:center;transition:opacity .75s ease,visibility .75s ease;
+}
+#introScreen.is-opening{opacity:0;visibility:hidden;pointer-events:none}
+.intro-content{width:min(100%,520px);display:flex;flex-direction:column;align-items:center;gap:20px}
+.intro-logo{display:block;width:min(88vw,430px);height:auto;max-height:68vh;object-fit:contain;filter:drop-shadow(0 10px 25px rgba(0,0,0,.22));animation:logo-arrive 1.1s ease both}
+.intro-open{border:1px solid #d9ad61;border-radius:999px;background:rgba(9,29,48,.45);color:#f8e7bd;padding:14px 25px;
+  font:500 12px 'DM Sans',sans-serif;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background .25s,transform .25s}
+.intro-open:hover,.intro-open:focus-visible{background:rgba(200,155,82,.18);transform:translateY(-2px);outline:2px solid #f4d28b;outline-offset:4px}
+.intro-hint{margin:0;font:italic 18px 'Cormorant Garamond',serif;color:#e8d6b3}
+@keyframes logo-arrive{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+body.intro-locked{overflow:hidden}
+@media(prefers-reduced-motion:reduce){#introScreen,.intro-logo{animation:none;transition:none}}
+
 </style>
 </head>
-<body>
+<body class="intro-locked">
+
+<div id="introScreen" role="dialog" aria-label="Sugan and Mona wedding invitation opening screen">
+  <div class="intro-content">
+    <img class="intro-logo" src="sugan-mona-wedding-logo.png" alt="Sugan and Mona wedding monogram in gold on navy blue">
+    <p class="intro-hint">A little love, a lifetime together.</p>
+    <button class="intro-open" id="openInvitation" type="button">Tap to open our invitation ♡</button>
+  </div>
+</div>
+
 <nav class="nav">
   <div class="brand">S & M</div>
   <div>
@@ -176,6 +203,22 @@ document.getElementById('rsvpForm').addEventListener('submit',async e=>{
    form.reset();
  }catch(err){status.textContent='Something went wrong. Please try again.';}
 });
+
+// Opening logo screen: reveal the existing invitation when tapped.
+(function(){
+  const intro = document.getElementById('introScreen');
+  const openButton = document.getElementById('openInvitation');
+  function openInvitation(){
+    intro.classList.add('is-opening');
+    document.body.classList.remove('intro-locked');
+    window.setTimeout(function(){ intro.remove(); }, 800);
+  }
+  openButton.addEventListener('click', openInvitation);
+  intro.addEventListener('click', function(event){
+    if(event.target === intro) openInvitation();
+  });
+})();
+
 </script>
 </body>
 </html>
